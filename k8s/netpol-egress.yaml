@@ -1,0 +1,27 @@
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: "test-networkpolicy-egress"
+  namespace: "test-namespace"
+  labels:
+    app: test
+    app.kubernetes.io/name: testapp
+spec:
+  podSelector:
+    matchLabels:
+      app: test
+      app.kubernetes.io/name: testapp
+  policyTypes:
+  - Ingress
+  egress:
+  - to:
+    - namespaceSelector:
+        matchLabels:
+          name: "testh2-namespace"
+      podSelector:
+        matchLabels:
+          app: testh2
+          app.kubernetes.io/name: testh2app
+    ports:
+      - protocol: TCP
+        port: 8081
