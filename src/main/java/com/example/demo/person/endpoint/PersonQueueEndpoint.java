@@ -1,5 +1,6 @@
 package com.example.demo.person.endpoint;
 
+import com.example.demo.messages.KafkaMessageProducer;
 import com.example.demo.messages.SendQueueMessage;
 import com.example.demo.person.application.PersonApplication;
 import com.example.demo.person.data.Person;
@@ -17,10 +18,20 @@ public class PersonQueueEndpoint {
     @Autowired(required = false)
     private SendQueueMessage sendQueueMessage;
 
+    @Autowired
+    private KafkaMessageProducer kafkaMessageProducer;
+
     @PostMapping("/personQueue")
     @ResponseBody
     public ResponseEntity<Person> createPersonOnQueue (@RequestBody Person person) throws JsonProcessingException {
         sendQueueMessage.sendMessage(person);
+        return ResponseEntity.status(202).build();
+    }
+
+    @PostMapping("/personQueue2")
+    @ResponseBody
+    public ResponseEntity<Person> createPersonOnKafkaQueue (@RequestBody Person person) throws JsonProcessingException {
+        kafkaMessageProducer.sendMessage(person);
         return ResponseEntity.status(202).build();
     }
 }
