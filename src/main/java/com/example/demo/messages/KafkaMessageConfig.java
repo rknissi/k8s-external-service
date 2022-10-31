@@ -1,5 +1,7 @@
 package com.example.demo.messages;
 
+import com.example.demo.person.data.PersonAvro;
+import io.confluent.kafka.serializers.KafkaAvroSerializer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,23 +20,28 @@ import java.util.Map;
 public class KafkaMessageConfig {
     @Value(value = "${kafka.bootstrapAddress}")
     private String bootstrapAddress;
+
+    @Value(value = "${schemaRegistry.bootstrapAddress}")
+    private String schemaRegistryAddress;
     @Bean
-    public ProducerFactory<String, String> producerFactory() {
+    public ProducerFactory<PersonAvro, PersonAvro> producerFactory() {
         Map<String, Object> configProps = new HashMap<>();
         configProps.put(
                 ProducerConfig.BOOTSTRAP_SERVERS_CONFIG,
                 bootstrapAddress);
         configProps.put(
                 ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG,
-                StringSerializer.class);
+                KafkaAvroSerializer.class);
         configProps.put(
                 ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG,
-                StringSerializer.class);
+                KafkaAvroSerializer.class);
+        configProps.put("schema.registry.url", schemaRegistryAddress);
+
         return new DefaultKafkaProducerFactory<>(configProps);
     }
 
     @Bean
-    public KafkaTemplate<String, String> kafkaTemplate() {
+    public KafkaTemplate<PersonAvro, PersonAvro> kafkaTemplate() {
         return new KafkaTemplate<>(producerFactory());
     }
 }

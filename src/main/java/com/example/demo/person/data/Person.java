@@ -1,7 +1,5 @@
 package com.example.demo.person.data;
 
-import java.io.Serializable;
-
 public class Person {
     private Long id;
 
