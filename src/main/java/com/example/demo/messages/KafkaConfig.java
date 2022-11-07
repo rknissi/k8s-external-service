@@ -28,4 +28,10 @@ public class KafkaConfig {
     public NewTopic topic1() {
         return new NewTopic("personCreation", 3, (short) 2);
     }
+
+    //Did not work for now
+    //@Bean
+    //public NewTopic dlt() {
+    //    return new NewTopic("personCreation.DLT", 3, (short) 1);
+    //}
 }

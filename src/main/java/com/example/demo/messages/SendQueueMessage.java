@@ -24,6 +24,7 @@ public class SendQueueMessage {
     }
 
     public void sendMessage(Person person) throws JsonProcessingException {
-        rabbitTemplate.convertAndSend(topicExchangeName, "create.person", objectMapper.writeValueAsString(person));
+        System.out.println("Sending message from RabbitMQ: " + person);
+        rabbitTemplate.convertAndSend(topicExchangeName, person.getName(), objectMapper.writeValueAsString(person));
     }
 }

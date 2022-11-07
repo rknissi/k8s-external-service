@@ -18,7 +18,7 @@ spec:
     spec:
       containers:
       - name: testapp
-        image: ayatachibana/test:0.0.21
+        image: ayatachibana/test:0.0.24
         ports:
           - containerPort: 8080
         readinessProbe:

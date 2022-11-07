@@ -21,6 +21,7 @@ public class KafkaMessageProducer {
     ObjectMapper objectMapper = new ObjectMapper();
 
     public void sendMessage(Person person) throws JsonProcessingException {
+        System.out.println("Sending message from Kafka: " + person);
         PersonAvro personAvro = new PersonAvro();
         personAvro.setName(person.getName());
         personAvro.setAge(person.getAge());
