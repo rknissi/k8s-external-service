@@ -25,8 +25,13 @@ public class KafkaConfig {
     }
 
     @Bean
-    public NewTopic topic1() {
-        return new NewTopic("personCreation", 3, (short) 2);
+    public NewTopic personCreationTopic() {
+        return new NewTopic("personCreation", 1, (short) 3);
+    }
+
+    @Bean
+    public NewTopic personCreationError() {
+        return new NewTopic("personCreationError", 1, (short) 1);
     }
 
     //Did not work for now

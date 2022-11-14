@@ -1,36 +1,75 @@
+#Headers, mostly similar between files
 apiVersion: apps/v1
+
+#type of object we are working with
 kind: Deployment
+
 metadata:
-  name: test-deployment
-  namespace: "test-namespace"
-  labels:
-    app: test
-    app.kubernetes.io/name: testapp
+  #unique key for this deployment, like an ID
+  #If you upload changes to this file, as long the KIND and the NAME are the same, the deployment will be update instead of creating another
+  name: producer-app
+
+  #grouping inside a cluster, normally by project
+  #Prevents overwriting
+  #Subdomain because of the DNS
+  namespace: "producer-namespace"
+
+#Fields that are specific to the KIND of object
 spec:
+  #How many pods (replicas) we want 
+  #They are identical
   replicas: 2
+
+  #Choose which pods will be replicated
+  #In this case, bods in which the label app is test
   selector:
     matchLabels:
-      app: test
+      app: producer-application
+
+  #Stamp, we put the content of what we want a pod to look like
+  #We can (optionally) separate this part elow to another yaml file with the kind Pod
   template:
+
     metadata:
+      #Tagging
+      #Maps of key and value
+      #Used to apply rules (selectors from other yaml files)
       labels:
-        app: test
+        app: producer-application
     spec:
       containers:
-      - name: testapp
-        image: ayatachibana/test:0.0.24
+
+        #Like an ID, we can name wathever we want
+      - name: producer
+
+        #From a repository, for example Docker hub
+        image: ayatachibana/test:0.0.37
+
+        #Which port the application will listen to
         ports:
           - containerPort: 8080
-        readinessProbe:
-          httpGet:
-            path: /check
-            port: 8080
-          initialDelaySeconds: 5
-          periodSeconds: 3
-          timeoutSeconds: 5
+
+        #Tests to make sure the pod can receive traffic
+        #If it's not ready, then it will set as unready until it's ready again
+        #readinessProbe:
+        #  httpGet:
+        #    path: /check
+        #    port: 8080
+        #  initialDelaySeconds: 5
+        #  periodSeconds: 3
+        #  timeoutSeconds: 5
+
+        #Checks if the pod's application is healthy
+        #If it's not, it will restart the pod automatically until is fine
         #livenessProbe:
         #  tcpSocket:
         #    port: 8080
+  
+  #Choose which update style we will use
+  #RollingUpdate: create a new replicaset, and when the new set is ready to receive traffic, delete the old replica set. No downtime
+  #Recreate: delete the actual replicaset and recreate a new one. Downtime expected
+  #Canary: manual, deploy manually new pods as canaries (new deployment). If everything is good, change the version of the non-canary pod and delete the canaries
+  # green-blue: manual, deploy another replica set with a new service for the new one. Test the new one manually, if everytinhg is ok, change the first setvice to the new
   strategy:
     type: RollingUpdate
 

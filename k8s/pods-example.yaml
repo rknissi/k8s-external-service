@@ -1,0 +1,30 @@
+apiVersion: v1
+kind: Pod
+
+metadata:
+  name: test-pod
+  namespace: "test-namespace"
+  labels:
+    app: test-application
+
+spec:
+  containers:
+    #Like an ID, we can name wathever we want
+  - name: testapp
+
+    #From a repository, for example Docker hub
+    image: ayatachibana/test:0.0.24
+
+    #Which port the application will listen to
+    ports:
+      - containerPort: 8080
+
+    #Tests to make sure the pod can receive traffic
+    #If it's not ready, then it will set as unready until it's ready again
+    readinessProbe:
+      httpGet:
+        path: /check
+        port: 8080
+      initialDelaySeconds: 5
+      periodSeconds: 3
+      timeoutSeconds: 5

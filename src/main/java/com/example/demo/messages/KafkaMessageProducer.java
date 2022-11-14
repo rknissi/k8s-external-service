@@ -43,4 +43,12 @@ public class KafkaMessageProducer {
             }
         });
     }
+
+    public void sendMessageError(Person person) throws JsonProcessingException {
+        System.out.println("Sending message from Kafka: " + person);
+        PersonAvro personAvro = new PersonAvro();
+        personAvro.setName(person.getName());
+        personAvro.setAge(person.getAge());
+        ListenableFuture<SendResult<PersonAvro, PersonAvro>> future = kafkaTemplate.send("personCreationError", personAvro);
+    }
 }

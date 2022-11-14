@@ -21,17 +21,24 @@ public class PersonQueueEndpoint {
     @Autowired
     private KafkaMessageProducer kafkaMessageProducer;
 
-    @PostMapping("/personQueue")
+    @PostMapping("/personRabbit")
     @ResponseBody
-    public ResponseEntity<Person> createPersonOnQueue (@RequestBody Person person) throws JsonProcessingException {
-        sendQueueMessage.sendMessage(person);
+    public ResponseEntity<Person> createPersonOnQueue (@RequestBody Person person, @RequestHeader("X-Type") String type, @RequestHeader("X-Routing-Key") String routingKey, @RequestHeader("X-Header1") String header1, @RequestHeader("X-Header2") String header2) throws JsonProcessingException {
+        sendQueueMessage.sendMessage(person, type, routingKey, header1, header2);
         return ResponseEntity.status(202).build();
     }
 
-    @PostMapping("/personQueue2")
+    @PostMapping("/personKafka")
     @ResponseBody
     public ResponseEntity<Person> createPersonOnKafkaQueue (@RequestBody Person person) throws JsonProcessingException {
         kafkaMessageProducer.sendMessage(person);
+        return ResponseEntity.status(202).build();
+    }
+
+    @PostMapping("/personKafkaError")
+    @ResponseBody
+    public ResponseEntity<Person> createPersonOnKafkaQueueWithError (@RequestBody Person person) throws JsonProcessingException {
+        kafkaMessageProducer.sendMessageError(person);
         return ResponseEntity.status(202).build();
     }
 }
